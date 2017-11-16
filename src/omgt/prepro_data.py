@@ -3,6 +3,8 @@ import numpy as np
 import h5py
 import scipy.misc
 
+import config
+
 def createH5(params):
 
 	# create output h5 file
@@ -46,18 +48,18 @@ if __name__=='__main__':
 	params_train = {
 		'name': 'miniplaces',
 		'split': 'train',
-		'img_resize': 256,
-		'data_root': '../../data/images/',	# MODIFY PATH ACCORDINGLY
-    		'data_list': '../../data/train.txt'
+		'img_resize': config.size,
+		'data_root': config.data_root,	# MODIFY PATH ACCORDINGLY
+    		'data_list': config.data_train_list
 	}
 
 	params_val = {
 		'name': 'miniplaces',
 		'split': 'val',
-		'img_resize': 256,
-		'data_root': '../../data/images/',	# MODIFY PATH ACCORDINGLY
-    		'data_list': '../../data/val.txt'
+		'img_resize': config.size,
+		'data_root': config.data_root,	# MODIFY PATH ACCORDINGLY
+    		'data_list': config.data_val_list
 	}
 
 	createH5(params_train)
-	createH5(params_val)
+	# createH5(params_val)

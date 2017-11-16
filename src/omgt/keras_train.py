@@ -7,8 +7,10 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from model import vgg19_cascade_model
 from load_data import load_data
+import config
 
-def preprocess_data(X, y, batch_size):
+#### UNUSED AS OF NOW BECAUSE TOO MUCH MEMORY CONSUMPTION
+def preprocess_data(X, y):
     # data augmentation
     datagen = ImageDataGenerator(
         featurewise_center=True,  # set input mean to 0 over the dataset
@@ -26,35 +28,30 @@ def preprocess_data(X, y, batch_size):
     datagen.fit(X)
 
     # input into model fit
-    return datagen.flow(X, y, batch_size)
+    return datagen.flow(X, y, config.batch_size)
 
-def train(batch_size=32, epochs=10, split=0.2):
+def train():
     """
     Trains our CNN
-
-    :param batch_size: size of minibatch
-    :param epochs: number of epochs to train for
-    :param split: fraction to use as validation data
     """
     # create base model
     model = vgg19_cascade_model()
 
     # callbacks for training
-    cb_early_stop = EarlyStopping(monitor="val_loss", patience=2)
+    cb_early_stop = EarlyStopping(monitor="val_loss", patience=config.patience)
     cb_checkpoint = ModelCheckpoint("weights.{epoch:02d}-{val_loss:.2f}.hdf5")
     cb_csv = CSVLogger("training.log")
 
     # preprocessed data niceness
     X, y = load_data()
-    inputs = preprocess_data(X, y, batch_size)
+    inputs = preprocess_data(X, y)
+
+    print("# Data loaded. Beginning training.")
 
     # fit using specified batches with data augmentation
-    model.fit_generator(
-        inputs, epochs=epochs,
-        verbose=0, validation_split=split,
-        callbacks=[cb_early_stop, cb_checkpoint, cb_csv],
-        steps_per_epoch=None, validation_steps=None)
-    # steps_per_epoch might be used for regularization
+    model.fit(X, y, batch_size=config.batch_size, epochs=config.epochs,
+        verbose=1, validation_split=config.split,
+        callbacks=[cb_early_stop, cb_checkpoint, cb_csv])
 
 def evaluate(X, y, model):
     return model.evaluate(X, y)

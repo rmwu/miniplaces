@@ -9,6 +9,8 @@ from keras.layers.core import Flatten, Dropout, Dense
 from keras.layers.convolutional import Convolution2D,MaxPooling2D
 from keras import regularizers
 
+import config
+
 def vgg19_cascade_model():
     """
     Modification of vgg19:
@@ -20,13 +22,13 @@ def vgg19_cascade_model():
     # images come in 128 by 128 with 3 channels
     # TODO figure out dimensions for each
 
-    filters = 32 # num filters for scaling up and down
+    filters = config.filters # num filters for scaling up and down
     classes = 100 # number of scene classes
 
-    reg = 0.01 # regularization constant
-    p_dropout = 0.5 # probability of keeping units
+    reg = config.reg # regularization constant
+    p_dropout = config.p_dropout # probability of keeping units
 
-    inputs = Input(shape=(128,128,3))
+    inputs = Input(shape=(config.size,config.size,3))
     # padding 'same' automatically zero-pads
     x = Convolution2D(filters, (3,3), padding="same", activation="relu")(inputs)
     x = Convolution2D(filters, (3,3), padding="same", activation="relu")(x)
@@ -38,7 +40,7 @@ def vgg19_cascade_model():
 
     # first intermediate outputs
     m1 = Flatten()(x)
-    m1 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(m1)
+    m1 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m1-dense")(m1)
     m1 = Dropout(p_dropout)(m1)
 
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
@@ -49,7 +51,7 @@ def vgg19_cascade_model():
 
     # second intermediate outputs
     m2 = Flatten()(x)
-    m2 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(m2)
+    m2 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m2-dense")(m2)
     m2 = Dropout(p_dropout)(m2)
 
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
@@ -60,19 +62,19 @@ def vgg19_cascade_model():
 
     # final outputs
     x = Flatten()(x) # TODO figure out dimensions
-    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(x)
+    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
     x = Dropout(p_dropout)(x)
-    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(x)
+    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense2")(x)
     x = Dropout(p_dropout)(x)
 
     # concatenate the three outputs together
     merged = concatenate([m1, m2, x], axis=-1)
-    prediction = Dense(classes, activation="softmax")(merged)
+    prediction = Dense(classes, activation="softmax", name="softmax-output")(merged)
 
     model = Model(inputs=inputs, outputs=prediction)
 
-    # optimizers: adam, rmsprop, sgd
-    model.compile(optimizer='rmsprop', # Adam(),
+    # optimizers: adam, rmsprop, sgd, etc.
+    model.compile(optimizer=config.optimizer,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
