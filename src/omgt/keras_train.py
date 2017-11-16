@@ -1,99 +1,58 @@
+"""
+Code for running and training model
+"""
 
-import numpy as np
+from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint
+from keras.preprocessing.image import ImageDataGenerator
 
-from keras.models import Sequential
-from keras.optimizers import Adam
-from keras.layers import Input, concatenate
-from keras.layers.core import Flatten, Dropout, Dense
-from keras.layers.convolutional import Convolution2D,MaxPooling2D
-from keras import regularizers
+from model import vgg19_cascade_model
+from load_data import load_data
 
-def vgg19_cascade_model():
-    """
-    Modification of vgg19:
-    - output a fully dense layer from each convolution, concatenated
-      onto inputs of final softmax prediction
-    - added regularization (dropout, weights)
-    - adjustable number of filters for convenience
-    """
-    model = Sequential()
+def preprocess_data(X, y, batch_size):
+    # data augmentation
+    datagen = ImageDataGenerator(
+        featurewise_center=True,  # set input mean to 0 over the dataset
+        samplewise_center=False,  # set each sample mean to 0
+        featurewise_std_normalization=False,  # divide inputs by std of the dataset
+        samplewise_std_normalization=False,  # divide each input by its std
+        zca_whitening=True,  # apply ZCA whitening
+        rotation_range=0,  # randomly rotate images in the range (degrees, 0 to 180)
+        width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
+        height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
+        horizontal_flip=True,  # randomly flip images
+        vertical_flip=False)  # randomly flip images
 
-    # images come in 128 by 128 with 3 channels
-    # TODO figure out dimensions for each
+    # actual transformation step
+    datagen.fit(X)
 
-    filters = 32 # num filters for scaling up and down
-    classes = 100 # number of scene classes
+    # input into model fit
+    return datagen.flow(X, y, batch_size)
 
-    reg = 0.01 # regularization constant
-    p_dropout = 0.5 # probability of dropout
-
-    inputs = Input(shape=(128,128,3))
-    # padding 'same' automatically zero-pads
-    x = Convolution2D(filters, (3,3), padding="same", activation="relu")(inputs)
-    x = Convolution2D(filters, (3,3), padding="same", activation="relu")(x)
-    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
-
-    x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x)
-    x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x)
-    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
-
-    # first intermediate outputs
-    m1 = Flatten()(x)
-    m1 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(m1)
-    m1 = Dropout(p_dropout)(m1)
-
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
-
-    # second intermediate outputs
-    m2 = Flatten()(x)
-    m2 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(m2)
-    m2 = Dropout(p_dropout)(m2)
-
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
-    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
-
-    # final outputs
-    x = Flatten()(x) # TODO figure out dimensions
-    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(x)
-    x = Dropout(p_dropout)(x)
-    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg))(x)
-    x = Dropout(p_dropout)(x)
-
-    # concatenate the three outputs together
-    merged = concatenate([m1, m2, x], axis=-1)
-    prediction = Dense(classes, activation="softmax")(merged)
-
-    model = Model(inputs=inputs, outputs=prediction)
-
-    # optimizers: adam, rmsprop, sgd
-    model.compile(optimizer='rmsprop', # Adam(),
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
-    return model
-
-def train(X, y, batch_size=32, epochs=10, split=0.2):
+def train(batch_size=32, epochs=10, split=0.2):
     """
     Trains our CNN
 
-    :param X: dataset
-    :param y: labels
     :param batch_size: size of minibatch
     :param epochs: number of epochs to train for
     :param split: fraction to use as validation data
     """
+    # create base model
     model = vgg19_cascade_model()
 
-    model.fit(
-        x=X, y=y, batch_size=batch_size, epochs=epochs,
+    # callbacks for training
+    cb_early_stop = EarlyStopping(monitor="val_loss", patience=2)
+    cb_checkpoint = ModelCheckpoint("weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+    cb_csv = CSVLogger("training.log")
+
+    # preprocessed data niceness
+    X, y = load_data()
+    inputs = preprocess_data(X, y, batch_size)
+
+    # fit using specified batches with data augmentation
+    model.fit_generator(
+        inputs, epochs=epochs,
         verbose=0, validation_split=split,
+        callbacks=[cb_early_stop, cb_checkpoint, cb_csv],
         steps_per_epoch=None, validation_steps=None)
     # steps_per_epoch might be used for regularization
 
@@ -102,9 +61,4 @@ def evaluate(X, y, model):
 
 def predict(X, model):
     return model.predict(X)
-
-
-
-
-
 
