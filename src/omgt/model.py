@@ -4,7 +4,7 @@ CNN models, code to run
 
 from keras.models import Model
 from keras.optimizers import Adam
-from keras.layers import Input, concatenate
+from keras.layers import Input, concatenate, BatchNormalization
 from keras.layers.core import Flatten, Dropout, Dense
 from keras.layers.convolutional import Convolution2D,MaxPooling2D
 from keras import regularizers
@@ -39,7 +39,8 @@ def vgg19_cascade_model():
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     # first intermediate outputs
-    m1 = Flatten()(x)
+    m1 = BatchNormalization()(x)
+    m1 = Flatten()(m1)
     m1 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m1-dense")(m1)
     m1 = Dropout(p_dropout)(m1)
 
@@ -50,7 +51,8 @@ def vgg19_cascade_model():
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     # second intermediate outputs
-    m2 = Flatten()(x)
+    m2 = BatchNormalization()(x)
+    m2 = Flatten()(m2)
     m2 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m2-dense")(m2)
     m2 = Dropout(p_dropout)(m2)
 
@@ -61,6 +63,7 @@ def vgg19_cascade_model():
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     # final outputs
+    x = BatchNormalization()(x)
     x = Flatten()(x) # TODO figure out dimensions
     x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
     x = Dropout(p_dropout)(x)
