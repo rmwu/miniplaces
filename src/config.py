@@ -3,9 +3,9 @@ Variables for configuration
 """
 
 ### data sources
-data_root = '../../data/images'
-data_train_list = '../../data/train_b.txt'
-data_val_list = '../../data/val.txt'
+data_root = '../data/images'
+data_train_list = '../data/train_b.txt'
+data_val_list = '../data/val.txt'
 
 size = 128 # image side length
 h5_train = 'miniplaces_{}_train.h5'.format(size)
