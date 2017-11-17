@@ -73,6 +73,37 @@ class DataLoaderH5(object):
         self.im_set = self.im_set[perm] 
         self.lab_set = self.lab_set[perm]
 
+# loading data from .h5
+class DataLoaderH5Test(object):
+    def __init__(self, **kwargs):
+        self.load_size = int(kwargs['load_size'])
+        self.fine_size = int(kwargs['fine_size'])
+        self.data_mean = np.array(kwargs['data_mean'])
+        self.randomize = kwargs['randomize']
+
+        print("# Loading data from {}.".format(kwargs['data_h5']))
+
+        # read data info from lists
+        f = h5py.File(kwargs['data_h5'], "r")
+        self.im_set = np.array(f['images'])
+
+        self.num = self.im_set.shape[0]
+        assert self.im_set.shape[1]==self.load_size, 'Image size error!'
+        assert self.im_set.shape[2]==self.load_size, 'Image size error!'
+        print('# Images found:', self.num)
+
+    def get_data(self):
+        """
+        custom method to return raw data
+        """
+        return self.im_set
+    
+    def size(self):
+        return self.num
+
+    def reset(self):
+        self._idx = 0
+
 # Loading data from disk
 class DataLoaderDisk(object):
     def __init__(self, **kwargs):

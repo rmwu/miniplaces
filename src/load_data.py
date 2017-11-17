@@ -7,6 +7,8 @@ import numpy as np
 import scipy.misc
 import h5py
 
+from keras.utils import to_categorical
+
 from DataLoader import *
 import config
 
@@ -30,7 +32,16 @@ opt_data_train = {
 opt_data_val = {
     'data_h5': config.h5_val,
     'data_root': config.data_root,
-    'data_list': config.data_train_list,
+    'data_list': config.data_val_list,
+    'load_size': load_size,
+    'fine_size': fine_size,
+    'data_mean': data_mean,
+    'randomize': False
+    }
+opt_data_test= {
+    'data_h5': config.h5_test,
+    'data_root': config.data_root,
+    'data_list': config.data_val_list,
     'load_size': load_size,
     'fine_size': fine_size,
     'data_mean': data_mean,
@@ -38,19 +49,20 @@ opt_data_val = {
     }
 
 def load_data():
-
     loader_train = DataLoaderH5(**opt_data_train)
+    loader_test = DataLoaderH5Test(**opt_data_test)
     # loader_val = DataLoaderH5(**opt_data_val)
 
     X_train, y_train = loader_train.get_data()
+    X_test = loader_test.get_data()
 
     # normalize X
     X_train = X_train.astype(np.float32) / 255.
+    X_test = X_test.astype(np.float32) / 255.
 
     # change y to one-hot
     n = y_train.shape[0]
-    y_onehot = np.zeros((n, classes))
-    y_onehot[np.arange(n), y_train] = 1
+    y_onehot = to_categorical(y_train)
 
-    return X_train, y_onehot
+    return X_train, y_onehot, X_test
 

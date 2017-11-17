@@ -76,9 +76,4 @@ def vgg19_cascade_model():
 
     model = Model(inputs=inputs, outputs=prediction)
 
-    # optimizers: adam, rmsprop, sgd, etc.
-    model.compile(optimizer=config.optimizer,
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
     return model
