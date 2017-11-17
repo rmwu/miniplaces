@@ -4,7 +4,7 @@ Variables for configuration
 
 ### data sources
 data_root = '../data/images'
-data_train_list = '../data/train_a.txt'
+data_train_list = '../data/train.txt'
 data_val_list = '../data/val.txt'
 data_test_list = '../data/test.txt'
 

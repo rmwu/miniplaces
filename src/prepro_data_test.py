@@ -15,7 +15,7 @@ def createH5Test(params):
     list_im = []
     list_lab = []
 
-    for x in range(300):
+    for x in range(10000):
         path = 'test/' + str(1).zfill(8)[-8:] + '.jpg'
         list_im.append(os.path.join(params['data_root'], path))
 
