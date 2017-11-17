@@ -23,7 +23,7 @@ def preprocess_data(X_train, y_train, X_val, y_val):
         featurewise_std_normalization=False,  # divide inputs by std of the dataset
         samplewise_std_normalization=False,  # divide each input by its std
         zca_whitening=False,  # apply ZCA whitening
-        rotation_range=0,  # randomly rotate images in the range (degrees, 0 to 180)
+        rotation_range=config.rotation,  # randomly rotate images in the range (degrees, 0 to 180)
         width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
         height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
         horizontal_flip=True,  # randomly flip images
@@ -43,7 +43,7 @@ def train(X_train, y_train, X_val, y_val):
     Trains our CNN
     """
     # create base model
-    model = vgg19_cascade_model()
+    model = vgg19_resnet_model()
 
     # optimizers: adam, rmsprop, sgd, etc.
     model.compile(optimizer=config.optimizer,

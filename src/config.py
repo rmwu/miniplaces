@@ -22,7 +22,10 @@ p_dropout = 0.5 # probability of keeping units
 optimizer = 'adam'
 
 ### training parameters
-batch_size = 32
-epochs = 30
+batch_size = 64
+epochs = 5
+
+rotation = 30 # rotate up to 30 either way
+
 val_split = 0.1 # unused atm
 patience = 2 # epochs before early stopping
