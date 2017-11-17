@@ -15,14 +15,14 @@ from load_data import load_data
 import config
 
 #### UNUSED AS OF NOW BECAUSE TOO MUCH MEMORY CONSUMPTION
-def preprocess_data(X, y):
+def preprocess_data(X_train, y_train, X_val, y_val):
     # data augmentation
     datagen = ImageDataGenerator(
-        featurewise_center=True,  # set input mean to 0 over the dataset
+        featurewise_center=False,  # set input mean to 0 over the dataset
         samplewise_center=False,  # set each sample mean to 0
         featurewise_std_normalization=False,  # divide inputs by std of the dataset
         samplewise_std_normalization=False,  # divide each input by its std
-        zca_whitening=True,  # apply ZCA whitening
+        zca_whitening=False,  # apply ZCA whitening
         rotation_range=0,  # randomly rotate images in the range (degrees, 0 to 180)
         width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
         height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
@@ -30,12 +30,15 @@ def preprocess_data(X, y):
         vertical_flip=False)  # randomly flip images
 
     # actual transformation step
-    datagen.fit(X)
+    # datagen.fit(X)
+
+    print("# Generating data flow.")
 
     # input into model fit
-    return datagen.flow(X, y, config.batch_size)
+    return (datagen.flow(X_train, y_train, config.batch_size),
+        datagen.flow(X_val, y_val, config.batch_size))
 
-def train():
+def train(X_train, y_train, X_val, y_val):
     """
     Trains our CNN
     """
@@ -53,30 +56,18 @@ def train():
     cb_csv = CSVLogger("training.log")
 
     # preprocessed data niceness
-    X, y, X_test = load_data()
-    inputs = preprocess_data(X, y)
+    inputs_train, inputs_val = preprocess_data(X_train, y_train, X_val, y_val)
 
     print("# Data loaded. Beginning training.")
 
-    history = model.fit_generator(inputs, epochs=config.epochs,
-        verbose=1, validation_split=config.val_split,
+    history = model.fit_generator(
+        inputs_train, epochs=config.epochs,
+        steps_per_epoch=X_train.shape[0] / config.batch_size,
+        validation_steps=X_val.shape[0] / config.batch_size,
+        verbose=1, validation_data=inputs_val,
         callbacks=[cb_early_stop, cb_checkpoint, cb_csv])
 
-    results = predict(X_test, model)
-
-    np.savetxt("results.csv", results, delimiter=",")
-
-    loss = np.array(history.history['loss'])
-    acc = np.array(history.history['acc'])
-    val_loss = np.array(history.history['val_loss'])
-    val_acc = np.array(history.history['val_acc'])
-    val_top_k = np.array(history.history['val_top_k_categorical_accuracy'])
-
-    np.savetxt("loss.csv", loss, delimiter=",")
-    np.savetxt("acc.csv", acc, delimiter=",")
-    np.savetxt("val_loss.csv", val_loss, delimiter=",")
-    np.savetxt("val_acc.csv", val_acc, delimiter=",")
-    np.savetxt("val_top_k.csv", val_top_k, delimiter=",")
+    return model, history
 
     # fit using specified batches with data augmentation
     # history = model.fit(X, y, batch_size=config.batch_size, epochs=config.epochs,

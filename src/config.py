@@ -23,6 +23,6 @@ optimizer = 'adam'
 
 ### training parameters
 batch_size = 32
-epochs = 20
-val_split = 0.1
+epochs = 30
+val_split = 0.1 # unused atm
 patience = 2 # epochs before early stopping
