@@ -83,9 +83,9 @@ def resnet_model():
 
     # final outputs
     x = Flatten()(x)
-    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
+    x = Dense(config.dense_units, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
     x = Dropout(p_dropout)(x)
-    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense2")(x)
+    x = Dense(config.dense_units, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense2")(x)
     x = Dropout(p_dropout)(x)
 
     # concatenate the three outputs together
