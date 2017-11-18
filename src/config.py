@@ -19,6 +19,8 @@ filters = 32 # base number of filters (scaled up or down)
 reg = 0.01 # regularization weight
 p_dropout = 0.5 # probability of keeping units
 
+dense_units = 100
+
 optimizer = 'adam'
 
 ### training parameters

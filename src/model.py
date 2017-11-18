@@ -36,50 +36,52 @@ def resnet_model():
     xc = Convolution2D(filters, (3,3), padding="same", activation="relu")(inputs)
     x = Convolution2D(filters, (3,3), padding="same", activation="relu")(xc)
     x = add([xc, x]) # new
-    xc = Convolution2D(filters, (3,3), padding="same", activation="relu")(x) # new
-    x = Convolution2D(filters, (3,3), padding="same", activation="relu")(xc) # new
-    x = add([xc, x]) # new
+    x = BatchNormalization()(x) # new
 
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     xc = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x)
     x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(xc)
     x = add([xc, x]) # new
+    x = BatchNormalization()(x) # new
+
     xc = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x) # new
     x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(xc) # new
     x = add([xc, x]) # new
-    xc = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x) # new
-    x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(xc) # new
-    x = add([xc, x])
+    x = BatchNormalization()(x) # new
 
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc)
     x = add([xc, x]) # new
+    x = BatchNormalization()(x) # new
+
     xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc)
     x = add([xc, x]) # new
+    x = BatchNormalization()(x) # new
+
     xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x) # new
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc) # new
     x = add([xc, x]) # new
-    xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x) # new
-    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc) # new
-    x = add([xc, x])
+    x = BatchNormalization()(x) # new
 
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     xc = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(x)
     x = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(xc)
     x = add([xc, x]) # new
+    x = BatchNormalization()(x) # new
+
     xc = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(x)
     x = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(xc)
-    x = add([xc, x])
+    x = add([xc, x]) # new
+    x = BatchNormalization()(x) # new
 
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     # final outputs
-    x = BatchNormalization()(x)
     x = Flatten()(x)
     x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
     x = Dropout(p_dropout)(x)
