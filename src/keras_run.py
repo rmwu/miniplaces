@@ -49,10 +49,10 @@ def run_past_model(weights_path):
     ind=np.argsort(results,axis=1)[:,-5:][:,::-1]
 
     # now write the submission file
-    with open('submit-{}.txt'.format(weights_path), 'wa+') as f:
+    with open('submit-{}.txt'.format(weights_path), 'w+') as f:
         for x in range(10000):
             path = 'test/' + str(x+1).zfill(8)[-8:] + '.jpg'
             labels = str(ind[x])[1:-1] # cut off [] lol
-                f.write(path + ' ' + labels + '\n')
+            f.write(path + ' ' + labels + '\n')
 
 
