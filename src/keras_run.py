@@ -27,18 +27,9 @@ if __name__=='__main__':
     np.savetxt("val_top_k.csv", val_top_k, delimiter=",")
 
     # make predictions on test data
-    results = predict(X_test, model)
+    test_model(X_test, model)
 
-    # save results from prediction
-    np.savetxt("results.csv", results, delimiter=",")
-
-def run_past_model(weights_path):
-    _, _, _, _, X_test = load_data()
-
-    # recreate the model
-    model = vgg19_resnet_model()
-    model.load_weights(weights_path)
-
+def test_model(X_test, model):
     # make predictions on test data
     results = predict(X_test, model)
 
@@ -49,10 +40,24 @@ def run_past_model(weights_path):
     ind=np.argsort(results,axis=1)[:,-5:][:,::-1]
 
     # now write the submission file
-    with open('submit-{}.txt'.format(weights_path), 'w+') as f:
+    filename = 'submit-{}.txt'.format(weights_path)
+    with open(filename, 'w+') as f:
+        f.write('')
+
+    with open(filename, 'a') as f:
         for x in range(10000):
             path = 'test/' + str(x+1).zfill(8)[-8:] + '.jpg'
             labels = str(ind[x])[1:-1] # cut off [] lol
             f.write(path + ' ' + labels + '\n')
+
+def run_past_model(weights_path):
+    _, _, _, _, X_test = load_data()
+
+    # recreate the model
+    model = vgg19_resnet_model()
+    model.load_weights(weights_path)
+
+    test_model(X_test, model)
+
 
 

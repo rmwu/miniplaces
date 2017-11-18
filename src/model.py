@@ -54,10 +54,10 @@ def vgg19_resnet_model():
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     # second intermediate outputs
-    m2 = BatchNormalization()(x)
-    m2 = Flatten()(m2)
-    m2 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m2-dense")(m2)
-    m2 = Dropout(p_dropout)(m2)
+    # m2 = BatchNormalization()(x)
+    # m2 = Flatten()(m2)
+    # m2 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m2-dense")(m2)
+    # m2 = Dropout(p_dropout)(m2)
 
     xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc)
@@ -77,7 +77,8 @@ def vgg19_resnet_model():
     x = Dropout(p_dropout)(x)
 
     # concatenate the three outputs together
-    merged = concatenate([m2, x], axis=-1)
+    # merged = concatenate([m2, x], axis=-1)
+    merged = x
     prediction = Dense(classes, activation="softmax", name="softmax-output")(merged)
 
     model = Model(inputs=inputs, outputs=prediction)
