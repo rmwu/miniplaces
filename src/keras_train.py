@@ -10,7 +10,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import backend as K
 import tensorflow as tf
 
-from model import vgg19_cascade_model
+from model import vgg19_cascade_model, vgg19_resnet_model
 from load_data import load_data
 import config
 
