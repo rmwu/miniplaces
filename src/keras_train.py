@@ -10,7 +10,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import backend as K
 import tensorflow as tf
 
-from model import vgg19_cascade_model, vgg19_resnet_model
+from model import *
 from load_data import load_data
 import config
 
@@ -43,7 +43,7 @@ def train(X_train, y_train, X_val, y_val):
     Trains our CNN
     """
     # create base model
-    model = vgg19_resnet_model()
+    model = resnet_model()
 
     # optimizers: adam, rmsprop, sgd, etc.
     model.compile(optimizer=config.optimizer,
@@ -68,11 +68,6 @@ def train(X_train, y_train, X_val, y_val):
         callbacks=[cb_early_stop, cb_checkpoint, cb_csv])
 
     return model, history
-
-    # fit using specified batches with data augmentation
-    # history = model.fit(X, y, batch_size=config.batch_size, epochs=config.epochs,
-    #     verbose=1, validation_split=config.val_split,
-    #     callbacks=[cb_early_stop, cb_checkpoint, cb_csv])
 
 def evaluate(X, y, model):
     return model.evaluate(X, y)

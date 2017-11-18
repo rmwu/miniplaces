@@ -14,6 +14,87 @@ from keras import regularizers
 
 import config
 
+def resnet_model():
+    """
+    Modification of vgg19:
+    - output a fully dense layer from each convolution, concatenated
+      onto inputs of final softmax prediction
+    - added regularization (dropout, weights)
+    - adjustable number of filters for convenience
+    """
+    # images come in 128 by 128 with 3 channels
+    # TODO figure out dimensions for each
+
+    filters = config.filters # num filters for scaling up and down
+    classes = 100 # number of scene classes
+
+    reg = config.reg # regularization constant
+    p_dropout = config.p_dropout # probability of keeping units
+
+    inputs = Input(shape=(config.size,config.size,3))
+    # padding 'same' automatically zero-pads
+    xc = Convolution2D(filters, (3,3), padding="same", activation="relu")(inputs)
+    x = Convolution2D(filters, (3,3), padding="same", activation="relu")(xc)
+    x = add([xc, x]) # new
+    xc = Convolution2D(filters, (3,3), padding="same", activation="relu")(x) # new
+    x = Convolution2D(filters, (3,3), padding="same", activation="relu")(xc) # new
+    x = add([xc, x]) # new
+
+    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
+
+    xc = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x)
+    x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(xc)
+    x = add([xc, x]) # new
+    xc = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x) # new
+    x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(xc) # new
+    x = add([xc, x]) # new
+    xc = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(x) # new
+    x = Convolution2D(2*filters, (3,3), padding="same", activation="relu")(xc) # new
+    x = add([xc, x])
+
+    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
+
+    xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
+    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc)
+    x = add([xc, x]) # new
+    xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
+    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc)
+    x = add([xc, x]) # new
+    xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x) # new
+    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc) # new
+    x = add([xc, x]) # new
+    xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x) # new
+    x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc) # new
+    x = add([xc, x])
+
+    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
+
+    xc = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(x)
+    x = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(xc)
+    x = add([xc, x]) # new
+    xc = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(x)
+    x = Convolution2D(8*filters, (3,3), padding="same", activation="relu")(xc)
+    x = add([xc, x])
+
+    x = MaxPooling2D((2, 2), strides=(2, 2))(x)
+
+    # final outputs
+    x = BatchNormalization()(x)
+    x = Flatten()(x)
+    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
+    x = Dropout(p_dropout)(x)
+    x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense2")(x)
+    x = Dropout(p_dropout)(x)
+
+    # concatenate the three outputs together
+    # merged = concatenate([m2, x], axis=-1)
+    merged = x
+    prediction = Dense(classes, activation="softmax", name="softmax-output")(merged)
+
+    model = Model(inputs=inputs, outputs=prediction)
+
+    return model
+
 def vgg19_resnet_model():
     """
     Modification of vgg19:
@@ -70,7 +151,7 @@ def vgg19_resnet_model():
 
     # final outputs
     x = BatchNormalization()(x)
-    x = Flatten()(x) # TODO figure out dimensions
+    x = Flatten()(x)
     x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
     x = Dropout(p_dropout)(x)
     x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense2")(x)
@@ -141,7 +222,7 @@ def vgg19_cascade_model():
 
     # final outputs
     x = BatchNormalization()(x)
-    x = Flatten()(x) # TODO figure out dimensions
+    x = Flatten()(x)
     x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense1")(x)
     x = Dropout(p_dropout)(x)
     x = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m3-dense2")(x)
