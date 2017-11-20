@@ -20,7 +20,7 @@ h5_test = 'miniplaces_{}_test.h5'.format(size)
 filters = 32 # base number of filters (scaled up or down)
 
 reg = 0.01 # regularization weight
-p_dropout = 0.8 # probability of keeping units
+p_dropout = 0.5 # probability of keeping units
 
 dense_units = 1000
 

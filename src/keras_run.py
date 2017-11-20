@@ -49,12 +49,14 @@ if __name__=='__main__':
     # save results from training
     loss = np.array(history.history['loss'])
     acc = np.array(history.history['acc'])
+    top_k = np.array(history.history['top_k_categorical_accuracy'])
     val_loss = np.array(history.history['val_loss'])
     val_acc = np.array(history.history['val_acc'])
     val_top_k = np.array(history.history['val_top_k_categorical_accuracy'])
 
     np.savetxt("loss.csv", loss, delimiter=",")
     np.savetxt("acc.csv", acc, delimiter=",")
+    np.savetxt("top_k.csv", top_k, delimiter=",")
     np.savetxt("val_loss.csv", val_loss, delimiter=",")
     np.savetxt("val_acc.csv", val_acc, delimiter=",")
     np.savetxt("val_top_k.csv", val_top_k, delimiter=",")
