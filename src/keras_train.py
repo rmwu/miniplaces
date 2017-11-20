@@ -12,6 +12,7 @@ import tensorflow as tf
 
 from model import *
 from model_resnet import *
+from model_resnet101 import *
 from load_data import load_data
 import config
 
@@ -44,7 +45,8 @@ def train(X_train, y_train, X_val, y_val):
     Trains our CNN
     """
     # create base model
-    model = ResNet50()
+    # model = ResNet50()
+    model = resnet101_model()
 
     # optimizers: adam, rmsprop, sgd, etc.
     model.compile(optimizer=config.optimizer,

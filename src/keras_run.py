@@ -8,7 +8,7 @@ from load_data import load_data
 from model import *
 from model_resnet import *
 
-def test_model(X_test, model):
+def test_model(X_test, model, weights_path = None):
     # make predictions on test data
     results = predict(X_test, model)
 
@@ -19,7 +19,10 @@ def test_model(X_test, model):
     ind=np.argsort(results,axis=1)[:,-5:][:,::-1]
 
     # now write the submission file
-    filename = 'submit-{}.txt'.format(weights_path)
+    if weights_path:
+        filename = 'submit-{}.txt'.format(weights_path)
+    else:
+        filename = 'submit.txt'
     with open(filename, 'w+') as f:
         f.write('')
 
@@ -36,7 +39,7 @@ def run_past_model(weights_path):
     model = ResNet50()
     model.load_weights(weights_path)
 
-    test_model(X_test, model)
+    test_model(X_test, model, weights_path)
 
 if __name__=='__main__':
     X_train, y_train, X_val, y_val, X_test = load_data()
