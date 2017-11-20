@@ -37,13 +37,16 @@ def preprocess_data(X_train, y_train, X_val, y_val):
     return (datagen.flow(X_train, y_train, config.batch_size),
         datagen.flow(X_val, y_val, config.batch_size))
 
-def train(X_train, y_train, X_val, y_val):
+def train(X_train, y_train, X_val, y_val, weights_path=None):
     """
     Trains our CNN
     """
     # create base model
     # model = ResNet50()
     model = config.model()
+    # restart from middle
+    if weights_path:
+        model.load_weights(weights_path)
 
     # optimizers: adam, rmsprop, sgd, etc.
     model.compile(optimizer=config.optimizer,

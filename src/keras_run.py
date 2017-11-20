@@ -1,6 +1,8 @@
 """
 Loads data and runs code
 """
+import sys
+
 import numpy as np
 
 from keras_train import train, evaluate, predict
@@ -43,8 +45,13 @@ def run_past_model(weights_path):
 if __name__=='__main__':
     X_train, y_train, X_val, y_val, X_test = load_data()
 
+    if len(sys.argv) > 1:
+        weights_path = sys.argv[1]
+    else
+        weights_path = None
+
     # fit the model
-    model, history = train(X_train, y_train, X_val, y_val)
+    model, history = train(X_train, y_train, X_val, y_val, weights_path)
 
     # save results from training
     loss = np.array(history.history['loss'])
