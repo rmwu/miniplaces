@@ -15,7 +15,7 @@ def predict(X, model):
     results = model.predict(X)
     return results
 
-def test_model(X_test, model, weights_path = None):
+def test_model(X_test, model, weights_path=None):
     # make predictions on test data
     results = predict(X_test, model)
 
@@ -25,7 +25,7 @@ def test_model(X_test, model, weights_path = None):
     # submission friendly format
     prepare_submission(results)
 
-def prepare_submission(results):
+def prepare_submission(results, weights_path=None):
     """
     :param results: softmax output on test set
     """
@@ -79,7 +79,7 @@ def ensemble_models(weights, models, contributions=None):
             assert cumulative.shape == results.shape # same dataset
             cumulative *= results * c
 
-    prepare_submission(cumulative)
+    prepare_submission(cumulative, '20171120-ensemble')
 
 def current_ensemble():
     # filenames
@@ -95,7 +95,7 @@ def current_ensemble():
       ResNet50]
 
     # accuracies were 0.63 0.69 0.5?
-    contributions = [1, 2, 0.5]
+    contributions = [2,4,1]
 
     ensemble_models(weights, models, contributions)
 
