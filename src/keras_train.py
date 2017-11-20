@@ -10,9 +10,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import backend as K
 import tensorflow as tf
 
-from model import *
-from model_resnet import *
-from model_resnet101 import *
 from load_data import load_data
 import config
 

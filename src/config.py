@@ -38,7 +38,7 @@ patience = 2 # epochs before early stopping
 # reusable model
 classes = 100
 img_dim = (size, size, 3)
-model = lambda: model_densenet.create_dense_net(classes, img_dim,dropout_rate=p_dropout)
+model = lambda: create_dense_net(classes, img_dim,dropout_rate=p_dropout)
 
 # model = ResNet50
 
