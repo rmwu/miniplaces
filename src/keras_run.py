@@ -5,11 +5,15 @@ import sys
 
 import numpy as np
 
-from keras_train import train, evaluate, predict
+from keras_train import train, evaluate
 from load_data import load_data
 
 from model_resnet import ResNet50
 import config
+
+def predict(X, model):
+    results = model.predict(X)
+    return results
 
 def test_model(X_test, model, weights_path = None):
     # make predictions on test data
@@ -67,7 +71,7 @@ def ensemble_models(weights, models, contributions=None):
     for w, m, c in zip(weights, models, contributions):
         model = m()
         model.load_weights(w)
-        results = predict(X_test)
+        results = predict(X_test, model)
 
         if cumulative is None:
             cumulative = results

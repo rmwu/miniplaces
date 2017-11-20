@@ -75,7 +75,3 @@ def train(X_train, y_train, X_val, y_val, weights_path=None):
 def evaluate(X, y, model):
     return model.evaluate(X, y)
 
-def predict(X, model):
-    results = model.predict(X)
-    return results
-
