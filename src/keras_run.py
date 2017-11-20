@@ -43,7 +43,7 @@ def prepare_submission(results):
             f.write(path + ' ' + labels + '\n')
 
 def run_past_model(weights_path):
-    _, _, _, _, X_test = load_data()
+    X_test = load_data(test_only=True)
 
     # recreate the model
     model = config.model()
@@ -57,7 +57,7 @@ def ensemble_models(weights, models, contributions=None):
     :param models: list of functions that return corresponding models
     :param contributions: relative weight of models
     """
-    _, _, _, _, X_test = load_data()
+    X_test = load_data(test_only=True)
 
     cumulative = None # stores results from all models
 
@@ -78,20 +78,22 @@ def ensemble_models(weights, models, contributions=None):
     prepare_submission(cumulative)
 
 def current_ensemble():
+    # filenames
     weights = [
         '20171120-RN50-weights.09-2.81.hdf5',
         '20171120-RN50Real-weights.15-2.42.hdf5',
         '20171120-RN50Reg-weights.05-3.26.hdf5']
 
-    # accuracies were 0.63 0.69 0.5?
-    contributions = [1, 2, 0.5]
-
+    # must be functions
     models = [
       lambda: ResNet50(reg=False, deeper=False),
       lambda: ResNet50(reg=False),
       ResNet50]
 
-    ensemble_models(weights, contributions, models)
+    # accuracies were 0.63 0.69 0.5?
+    contributions = [1, 2, 0.5]
+
+    ensemble_models(weights, models, contributions)
 
 if __name__=='__main__':
     X_train, y_train, X_val, y_val, X_test = load_data()

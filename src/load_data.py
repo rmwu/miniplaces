@@ -48,23 +48,28 @@ opt_data_test= {
     'randomize': False
     }
 
-def load_data():
-    loader_train = DataLoaderH5(**opt_data_train)
-    loader_val = DataLoaderH5(**opt_data_val)
+def load_data(test_only=False):
+    if not test_only:
+        loader_train = DataLoaderH5(**opt_data_train)
+        loader_val = DataLoaderH5(**opt_data_val)
+
+        X_train, y_train = loader_train.get_data()
+        X_val, y_val = loader_val.get_data()
+
+        # normalize X
+        X_train = X_train.astype(np.float32) / 255.
+        X_val = X_val.astype(np.float32) / 255.
+
+        # change y to one-hot
+        y_train = to_categorical(y_train)
+        y_val = to_categorical(y_val)
+
+    # repeat steps for test set
     loader_test = DataLoaderH5Test(**opt_data_test)
-
-    X_train, y_train = loader_train.get_data()
-    X_val, y_val = loader_val.get_data()
     X_test = loader_test.get_data()
-
-    # normalize X
-    X_train = X_train.astype(np.float32) / 255.
-    X_val = X_val.astype(np.float32) / 255.
     X_test = X_test.astype(np.float32) / 255.
 
-    # change y to one-hot
-    y_train = to_categorical(y_train)
-    y_val = to_categorical(y_val)
-
+    if test_only:
+        return X_test
     return X_train, y_train, X_val, y_val, X_test
 
