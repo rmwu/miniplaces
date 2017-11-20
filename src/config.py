@@ -25,7 +25,7 @@ optimizer = 'adam'
 
 ### training parameters
 batch_size = 64
-epochs = 5
+epochs = 30
 
 rotation = 30 # rotate up to 30 either way
 
