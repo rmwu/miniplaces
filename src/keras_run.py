@@ -7,6 +7,8 @@ import numpy as np
 
 from keras_train import train, evaluate, predict
 from load_data import load_data
+
+from model_resnet import ResNet50
 import config
 
 def test_model(X_test, model, weights_path = None):
@@ -16,6 +18,13 @@ def test_model(X_test, model, weights_path = None):
     # save results from prediction
     np.savetxt("results.csv", results, delimiter=",")
 
+    # submission friendly format
+    prepare_submission(results)
+
+def prepare_submission(results):
+    """
+    :param results: softmax output on test set
+    """
     # fetch top 5 indices
     ind=np.argsort(results,axis=1)[:,-5:][:,::-1]
 
@@ -42,12 +51,54 @@ def run_past_model(weights_path):
 
     test_model(X_test, model, weights_path)
 
+def ensemble_models(weights, models, contributions=None):
+    """
+    :param weights: list of hdf5 neural net weights
+    :param models: list of functions that return corresponding models
+    :param contributions: relative weight of models
+    """
+    _, _, _, _, X_test = load_data()
+
+    cumulative = None # stores results from all models
+
+    if contributions is None: # if none, consider all equal
+        contributions = [1] * len(weights)
+
+    for w, m, c in zip(weights, models, contributions):
+        model = m()
+        model.load_weights(w)
+        results = predict(X_test)
+
+        if cumulative is None:
+            cumulative = results
+        else:
+            assert cumulative.shape == results.shape # same dataset
+            cumulative *= results * c
+
+    prepare_submission(cumulative)
+
+def current_ensemble():
+    weights = [
+        '20171120-RN50-weights.09-2.81.hdf5',
+        '20171120-RN50Real-weights.15-2.42.hdf5',
+        '20171120-RN50Reg-weights.05-3.26.hdf5']
+
+    # accuracies were 0.63 0.69 0.5?
+    contributions = [1, 2, 0.5]
+
+    models = [
+      lambda: ResNet50(reg=False, deeper=False),
+      lambda: ResNet50(reg=False),
+      ResNet50]
+
+    ensemble_models(weights, contributions, models)
+
 if __name__=='__main__':
     X_train, y_train, X_val, y_val, X_test = load_data()
 
     if len(sys.argv) > 1:
         weights_path = sys.argv[1]
-    else
+    else:
         weights_path = None
 
     # fit the model

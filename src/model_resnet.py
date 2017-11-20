@@ -110,7 +110,7 @@ def conv_block(input_tensor, kernel_size, filters, stage, block, strides=(2, 2))
 
 
 def ResNet50(include_top=True, weights=None, input_shape=(128,128,3),
-             pooling='max', classes=100):
+             pooling='max', classes=100, reg=True, deeper=True):
 
     img_input = Input(shape=input_shape)
 
@@ -132,14 +132,16 @@ def ResNet50(include_top=True, weights=None, input_shape=(128,128,3),
     x = conv_block(x, 3, [128, 128, 512], stage=3, block='a')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='b')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
+    if deeper:
+        x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
 
     x = conv_block(x, 3, [256, 256, 1024], stage=4, block='a')
     x = identity_block(x, 3, [256, 256, 1024], stage=4, block='b')
     x = identity_block(x, 3, [256, 256, 1024], stage=4, block='c')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f')
+    if deeper:
+        x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d')
+        x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e')
+        x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f')
 
     x = conv_block(x, 3, [512, 512, 2048], stage=5, block='a')
     x = identity_block(x, 3, [512, 512, 2048], stage=5, block='b')
@@ -150,9 +152,10 @@ def ResNet50(include_top=True, weights=None, input_shape=(128,128,3),
 
     if include_top:
         x = Flatten()(x)
-        x = Dense(config.dense_units, activation='relu', name='fc1000',
-            kernel_regularizer=regularizers.l2(config.reg))(x)
-        x = Dropout(config.p_dropout)(x)
+        if reg:
+            x = Dense(config.dense_units, activation='relu', name='fc1000',
+                kernel_regularizer=regularizers.l2(config.reg))(x)
+            x = Dropout(config.p_dropout)(x)
         x = Dense(classes, activation='softmax', name='output',
             kernel_regularizer=regularizers.l2(config.reg))(x)
     else:
