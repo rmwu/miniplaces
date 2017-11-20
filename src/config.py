@@ -28,9 +28,9 @@ optimizer = 'adam'
 
 ### training parameters
 batch_size = 64
-epochs = 30
+epochs = 10
 
-rotation = 30 # rotate up to 30 either way
+rotation = 50 # rotate up to 30 either way
 
 val_split = 0.1 # unused atm
 patience = 2 # epochs before early stopping
@@ -38,9 +38,9 @@ patience = 2 # epochs before early stopping
 # reusable model
 classes = 100
 img_dim = (size, size, 3)
-# model = lambda: create_dense_net(classes, img_dim,dropout_rate=p_dropout)
+model = lambda: create_dense_net(classes, img_dim, dropout_rate=p_dropout)
 
-model = ResNet50
+# model = ResNet50
 
 
 

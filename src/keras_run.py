@@ -46,14 +46,17 @@ def prepare_submission(results, weights_path=None):
             labels = str(ind[x])[1:-1] # cut off [] lol
             f.write(path + ' ' + labels + '\n')
 
-def run_past_model(weights_path):
+def run_past_model(weights_path, model=None):
     X_test = load_data(test_only=True)
 
     # recreate the model
-    model = config.model()
-    model.load_weights(weights_path)
+    if model is None:
+        m = config.model()
+    else:
+        m = model()
+    m.load_weights(weights_path)
 
-    test_model(X_test, model, weights_path)
+    test_model(X_test, m, weights_path)
 
 def ensemble_models(weights, models, contributions=None):
     """
@@ -81,6 +84,7 @@ def ensemble_models(weights, models, contributions=None):
 
     prepare_submission(cumulative, '20171120-ensemble')
 
+# 0.289 top 5
 def current_ensemble():
     # filenames
     weights = [
