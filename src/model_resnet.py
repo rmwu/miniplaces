@@ -119,8 +119,7 @@ def ResNet50(include_top=True, weights=None, input_shape=(128,128,3),
     else:
         bn_axis = 1
 
-    x = Conv2D(
-        64, (7, 7), strides=(2, 2), padding='same', name='conv1')(img_input)
+    x = Conv2D(64, (7, 7), strides=(2, 2), padding='same', name='conv1')(img_input)
     x = BatchNormalization(axis=bn_axis, name='bn_conv1')(x)
     x = Activation('relu')(x)
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)
@@ -153,6 +152,9 @@ def ResNet50(include_top=True, weights=None, input_shape=(128,128,3),
     if include_top:
         x = Flatten()(x)
         if reg:
+            x = Dense(config.dense_units, activation='relu', name='fc1000',
+                kernel_regularizer=regularizers.l2(config.reg))(x)
+            x = Dropout(config.p_dropout)(x)
             x = Dense(config.dense_units, activation='relu', name='fc1000',
                 kernel_regularizer=regularizers.l2(config.reg))(x)
             x = Dropout(config.p_dropout)(x)

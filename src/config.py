@@ -5,6 +5,8 @@ from model import *
 from model_resnet import *
 from model_densenet import *
 
+from keras.optimizers import SGD
+
 ### data sources
 data_root = '../data/images'
 data_train_list = '../data/train.txt'
@@ -24,7 +26,7 @@ p_dropout = 0.5 # probability of keeping units
 
 dense_units = 1000
 
-optimizer = 'adam'
+optimizer = SGD(momentum=0.01, nesterov=True)# 'sgd'
 
 ### training parameters
 batch_size = 64
@@ -38,9 +40,9 @@ patience = 2 # epochs before early stopping
 # reusable model
 classes = 100
 img_dim = (size, size, 3)
-model = lambda: create_dense_net(classes, img_dim, dropout_rate=p_dropout)
+model = # lambda: create_dense_net(classes, img_dim, dropout_rate=p_dropout)
 
-# model = ResNet50
+model = ResNet50
 
 
 
