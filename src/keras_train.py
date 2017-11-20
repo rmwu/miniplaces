@@ -46,7 +46,7 @@ def train(X_train, y_train, X_val, y_val):
     """
     # create base model
     # model = ResNet50()
-    model = ResNet50()
+    model = config.model()
 
     # optimizers: adam, rmsprop, sgd, etc.
     model.compile(optimizer=config.optimizer,

@@ -5,8 +5,7 @@ import numpy as np
 
 from keras_train import train, evaluate, predict
 from load_data import load_data
-from model import *
-from model_resnet import *
+import config
 
 def test_model(X_test, model, weights_path = None):
     # make predictions on test data
@@ -36,7 +35,7 @@ def run_past_model(weights_path):
     _, _, _, _, X_test = load_data()
 
     # recreate the model
-    model = ResNet50()
+    model = config.model()
     model.load_weights(weights_path)
 
     test_model(X_test, model, weights_path)

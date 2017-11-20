@@ -1,6 +1,9 @@
 """
 Variables for configuration
 """
+from model import *
+from model_resnet import *
+from model_densenet import *
 
 ### data sources
 data_root = '../data/images'
@@ -17,7 +20,7 @@ h5_test = 'miniplaces_{}_test.h5'.format(size)
 filters = 32 # base number of filters (scaled up or down)
 
 reg = 0.01 # regularization weight
-p_dropout = 0.5 # probability of keeping units
+p_dropout = 0.8 # probability of keeping units
 
 dense_units = 1000
 
@@ -31,3 +34,13 @@ rotation = 30 # rotate up to 30 either way
 
 val_split = 0.1 # unused atm
 patience = 2 # epochs before early stopping
+
+# reusable model
+classes = 100
+img_dim = (size, size, 3)
+model = lambda: model_densenet.create_dense_net(classes, img_dim,dropout_rate=p_dropout)
+
+# model = ResNet50
+
+
+
