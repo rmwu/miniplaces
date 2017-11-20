@@ -57,9 +57,6 @@ class Scale(Layer):
         self.gamma = self.gamma_init(shape, name='{}_gamma'.format(self.name))
         self.beta = self.beta_init(shape, name='{}_beta'.format(self.name))
         self.trainable_weights = [self.gamma, self.beta]
-                if self.initial_weights is not None:
-            self.set_weights(self.initial_weights)
-            del self.initial_weights
 
     def call(self, x, mask=None):
         input_shape = self.input_spec[0].shape
@@ -83,7 +80,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
         stage: integer, current stage label, used for generating layer names
         block: 'a','b'..., current block label, used for generating layer names
     '''
-        eps = 1.1e-5
+    eps = 1.1e-5
     nb_filter1, nb_filter2, nb_filter3 = filters
     conv_name_base = 'res' + str(stage) + block + '_branch'
     bn_name_base = 'bn' + str(stage) + block + '_branch'
