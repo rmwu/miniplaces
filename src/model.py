@@ -127,6 +127,12 @@ def vgg19_resnet_model():
 
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
+    # first intermediate outputs
+    # m1 = BatchNormalization()(x)
+    # m1 = Flatten()(m1)
+    # m1 = Dense(filters**2, activation="relu", kernel_regularizer=regularizers.l2(reg), name="m1-dense")(m1)
+    # m1 = Dropout(p_dropout)(m1)
+
     xc = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(xc)
     x = Convolution2D(4*filters, (3,3), padding="same", activation="relu")(x)

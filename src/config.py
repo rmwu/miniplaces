@@ -5,7 +5,6 @@ from model import *
 from model_resnet import *
 from model_resnet_inception import *
 from model_densenet import *
-from model_resnet152 import *
 
 from keras.optimizers import SGD
 
@@ -30,13 +29,15 @@ p_dropout = 0.5 # probability of keeping units
 
 dense_units = 1000
 
+optimizer = 'adam'
 optimizer = SGD(lr=0.1, momentum=0.9, nesterov=True)# 'sgd'
+# optimizer = 'rmsprop'
 
 ### training parameters
 batch_size = 64
 epochs = 20
 
-rotation = 50 # rotate up to 30 either way
+rotation = 15 # rotate up to 15 either way
 
 val_split = 0.1 # unused atm
 patience = 2 # epochs before early stopping
