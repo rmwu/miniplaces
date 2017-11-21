@@ -46,7 +46,7 @@ classes = 100
 img_dim = (size, size, 3)
 # model = lambda: create_dense_net(classes, img_dim, dropout_rate=p_dropout)
 
-# model = lambda: ResNet50(reg=False)
+model = lambda: ResNet50(reg=False)
 
-model = ResNet152 # InceptionResNetV2
+# model = ResNet152 # InceptionResNetV2
 
