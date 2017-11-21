@@ -5,6 +5,7 @@ from model import *
 from model_resnet import *
 from model_resnet_inception import *
 from model_densenet import *
+from model_resnet152 import *
 
 from keras.optimizers import SGD
 
@@ -45,5 +46,5 @@ img_dim = (size, size, 3)
 
 # model = lambda: ResNet50(reg=False)
 
-model = InceptionResNetV2
+model = resnet152_model # InceptionResNetV2
 

@@ -102,7 +102,7 @@ def current_ensemble():
       InceptionResNetV2]
 
     # accuracies were 0.63 0.69 0.5, 0.65?
-    contributions = [4,8,2,4]
+    contributions = [4,8,2,4] # were 1 2 0.5
 
     ensemble_models(weights, models, contributions)
 
