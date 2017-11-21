@@ -3,6 +3,7 @@ Variables for configuration
 """
 from model import *
 from model_resnet import *
+from model_resnet_inception import *
 from model_densenet import *
 
 from keras.optimizers import SGD
@@ -42,7 +43,7 @@ classes = 100
 img_dim = (size, size, 3)
 # model = lambda: create_dense_net(classes, img_dim, dropout_rate=p_dropout)
 
-model = lambda: ResNet50(reg=False)
+# model = lambda: ResNet50(reg=False)
 
-
+model = InceptionResNetV2
 
