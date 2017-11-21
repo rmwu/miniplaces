@@ -9,6 +9,7 @@ from keras_train import train, evaluate
 from load_data import load_data
 
 from model_resnet import ResNet50
+from model_resnet_inception import InceptionResNetV2
 import config
 
 def predict(X, model):
@@ -90,23 +91,27 @@ def current_ensemble():
     weights = [
         '20171120-RN50-weights.09-2.81.hdf5',
         '20171120-RN50Real-weights.15-2.42.hdf5',
-        '20171120-RN50Reg-weights.05-3.26.hdf5']
+        '20171120-RN50Reg-weights.05-3.26.hdf5',
+        '20171120-IRN-3-weights.19-2.58.hdf5']
 
     # must be functions
     models = [
       lambda: ResNet50(reg=False, deeper=False),
       lambda: ResNet50(reg=False),
-      ResNet50]
+      ResNet50,
+      InceptionResNetV2]
 
-    # accuracies were 0.63 0.69 0.5?
-    contributions = [2,4,1]
+    # accuracies were 0.63 0.69 0.5, 0.65?
+    contributions = [4,8,2,4]
 
     ensemble_models(weights, models, contributions)
 
 if __name__=='__main__':
     X_train, y_train, X_val, y_val, X_test = load_data()
 
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 2: # too lazy to make a flag
+        return current_ensemble()
+    elif len(sys.argv) > 1:
         weights_path = sys.argv[1]
     else:
         weights_path = None
