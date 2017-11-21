@@ -237,6 +237,8 @@ def InceptionResNetV2(include_top=True,
         elif pooling == 'max':
             x = GlobalMaxPooling2D()(x)
 
+    inputs = img_input
+
     # Create model
     model = Model(inputs, x, name='inception_resnet_v2')
 
