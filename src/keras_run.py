@@ -107,11 +107,9 @@ def current_ensemble():
     ensemble_models(weights, models, contributions)
 
 if __name__=='__main__':
-    X_train, y_train, X_val, y_val, X_test = load_data()
-
     if len(sys.argv) > 1:
         arg = sys.argv[1]
-        
+
         if arg == 'ensemble': # too lazy to make a flag
             current_ensemble()
             sys.exit(0)
@@ -119,6 +117,9 @@ if __name__=='__main__':
             weights_path = sys.argv[1]
     else:
         weights_path = None
+
+    # load all data sets
+    X_train, y_train, X_val, y_val, X_test = load_data()
 
     # fit the model
     model, history = train(X_train, y_train, X_val, y_val, weights_path)
