@@ -30,7 +30,7 @@ p_dropout = 0.5 # probability of keeping units
 
 dense_units = 1000
 
-optimizer = SGD(learning_rate=0.01, momentum=0.9, nesterov=True)# 'sgd'
+optimizer = SGD(lr=0.1, momentum=0.9, nesterov=True)# 'sgd'
 
 ### training parameters
 batch_size = 64
