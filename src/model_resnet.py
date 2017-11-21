@@ -152,10 +152,7 @@ def ResNet50(include_top=True, weights=None, input_shape=(128,128,3),
     if include_top:
         x = Flatten()(x)
         if reg:
-            x = Dense(config.dense_units, activation='relu', name='fc1000',
-                kernel_regularizer=regularizers.l2(config.reg))(x)
-            x = Dropout(config.p_dropout)(x)
-            x = Dense(config.dense_units, activation='relu', name='fc1000-2',
+            x = Dense(100, activation='relu', name='fc1000',
                 kernel_regularizer=regularizers.l2(config.reg))(x)
             x = Dropout(config.p_dropout)(x)
         x = Dense(classes, activation='softmax', name='output',

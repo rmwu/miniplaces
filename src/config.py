@@ -30,7 +30,7 @@ optimizer = SGD(momentum=0.01, nesterov=True)# 'sgd'
 
 ### training parameters
 batch_size = 64
-epochs = 10
+epochs = 20
 
 rotation = 50 # rotate up to 30 either way
 
