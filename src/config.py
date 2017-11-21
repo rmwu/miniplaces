@@ -21,6 +21,8 @@ h5_val = 'miniplaces_{}_val.h5'.format(size)
 h5_test = 'miniplaces_{}_test.h5'.format(size)
 
 ### cnn model parameters
+bn_axis = 3
+
 filters = 32 # base number of filters (scaled up or down)
 
 reg = 0.01 # regularization weight
@@ -46,5 +48,5 @@ img_dim = (size, size, 3)
 
 # model = lambda: ResNet50(reg=False)
 
-model = resnet152_model # InceptionResNetV2
+model = ResNet152 # InceptionResNetV2
 
