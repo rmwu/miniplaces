@@ -83,16 +83,16 @@ def ensemble_models(weights, models, contributions=None):
             assert cumulative.shape == results.shape # same dataset
             cumulative *= results * c
 
-    prepare_submission(cumulative, '20171120-ensemble')
+    prepare_submission(cumulative, '20171121-ensemble')
 
 # 0.289 top 5
 def current_ensemble():
     # filenames
     weights = [
-        '20171120-RN50-weights.09-2.81.hdf5',
-        '20171120-RN50Real-weights.15-2.42.hdf5',
-        '20171120-RN50Reg-weights.05-3.26.hdf5',
-        '20171120-IRN-3-weights.19-2.58.hdf5']
+        'results/20171120-RN50-weights.09-2.81.hdf5',
+        'results/20171120-RN50Real-weights.15-2.42.hdf5',
+        'results/20171120-RN50Reg-weights.05-3.26.hdf5',
+        'results/20171120-IRN-3-weights.19-2.58.hdf5']
 
     # must be functions
     models = [
@@ -109,10 +109,14 @@ def current_ensemble():
 if __name__=='__main__':
     X_train, y_train, X_val, y_val, X_test = load_data()
 
-    if len(sys.argv) > 2: # too lazy to make a flag
-        return current_ensemble()
-    elif len(sys.argv) > 1:
-        weights_path = sys.argv[1]
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+        
+        if arg == 'ensemble': # too lazy to make a flag
+            current_ensemble()
+            sys.exit(0)
+        else:
+            weights_path = sys.argv[1]
     else:
         weights_path = None
 
