@@ -40,7 +40,7 @@ epochs = 20
 rotation = 15 # rotate up to 15 either way
 
 val_split = 0.1 # unused atm
-patience = 2 # epochs before early stopping
+patience = 4 # epochs before early stopping
 
 # reusable model
 classes = 100

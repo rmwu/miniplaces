@@ -92,16 +92,16 @@ def current_ensemble():
         'results/20171120-RN50-weights.09-2.81.hdf5',
         'results/20171120-RN50Real-weights.15-2.42.hdf5',
         'results/20171120-RN50Reg-weights.05-3.26.hdf5',
-        'results/20171120-IRN-3-weights.19-2.58.hdf5']
+        'results/20171121-RN50-weights.17-2.78.hdf5']
 
     # must be functions
     models = [
       lambda: ResNet50(reg=False, deeper=False),
       lambda: ResNet50(reg=False),
       ResNet50,
-      InceptionResNetV2]
+      lambda: ResNet50(reg=False)]
 
-    # accuracies were 0.63 0.69 0.5, 0.65?
+    # accuracies were 0.63 0.69 0.5, 0.6?
     contributions = [4,8,2,4] # were 1 2 0.5
 
     ensemble_models(weights, models, contributions)
